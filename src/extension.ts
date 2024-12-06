@@ -67,10 +67,10 @@ export function activate(context: vscode.ExtensionContext) {
                     const regex = new RegExp(rule.lineType.slice(1, -1));
                     console.log({
                         regex: regex,
-                        text: text,
-                        result: regex.test(text)
+                        text: lineText,
+                        result: regex.test(lineText)
                     })
-                    if (regex.test(text)) {    
+                    if (regex.test(lineText)) {    
                         rule.columnRanges?.forEach((range: { start: number; end: number; }, index: number) => {
                             const [r, g, b] = getRGBColor(index, rule.columnRanges.length);
                             const color = `rgb(${r}, ${g}, ${b})`;
