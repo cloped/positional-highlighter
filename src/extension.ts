@@ -22,9 +22,6 @@ export function activate(context: vscode.ExtensionContext) {
             }
 
             const rules: Rule[] = vscode.workspace.getConfiguration('positionalHighlighter').get('rules', []);
-            console.log("rules", rules)
-            console.log("rule", rules[0])
-            console.log("rule", typeof(rules[0]))
 
             // Function to generate RGB color
             function getRGBColor(index: number, total: number): [number, number, number] {
@@ -62,10 +59,17 @@ export function activate(context: vscode.ExtensionContext) {
             const allDecorations: { [color: string]: vscode.Range[] } = {};
 
             lines.forEach((lineText, lineIndex) => {
+                console.log("Line",lineIndex, lineText);
                 rules.forEach(rule => {
+                    console.log("Rule", rule.lineType);
                     // On future try to allow lineType to be a function
                     // if (rule.lineType(lineText, lineIndex)) {
                     const regex = new RegExp(rule.lineType.slice(1, -1));
+                    console.log({
+                        regex: regex,
+                        text: text,
+                        result: regex.test(text)
+                    })
                     if (regex.test(text)) {    
                         rule.columnRanges?.forEach((range: { start: number; end: number; }, index: number) => {
                             const [r, g, b] = getRGBColor(index, rule.columnRanges.length);
