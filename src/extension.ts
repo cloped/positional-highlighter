@@ -15,6 +15,10 @@ export function activate(context: vscode.ExtensionContext) {
             const text = document.getText();
             const lines = text.split("\n");
 
+            console.log("Document", document);
+            console.log("Text", text);
+            console.log("Lines", lines);
+
             // Read the rules from the configuration
             interface Rule {
                 lineType: string;
@@ -59,7 +63,8 @@ export function activate(context: vscode.ExtensionContext) {
             const allDecorations: { [color: string]: vscode.Range[] } = {};
 
             lines.forEach((lineText, lineIndex) => {
-                console.log("Line",lineIndex, lineText);
+                const formattedLineText = lineText.trim();
+                console.log("Line",lineIndex, formattedLineText);
                 rules.forEach(rule => {
                     console.log("Rule", rule.lineType);
                     // On future try to allow lineType to be a function
@@ -67,17 +72,17 @@ export function activate(context: vscode.ExtensionContext) {
                     const regex = new RegExp(rule.lineType.slice(1, -1));
                     console.log({
                         regex: regex,
-                        text: lineText,
-                        result: regex.test(lineText)
+                        text: formattedLineText,
+                        result: regex.test(formattedLineText)
                     })
-                    if (regex.test(lineText)) {    
+                    if (regex.test(formattedLineText)) {    
                         rule.columnRanges?.forEach((range: { start: number; end: number; }, index: number) => {
                             const [r, g, b] = getRGBColor(index, rule.columnRanges.length);
                             const color = `rgb(${r}, ${g}, ${b})`;
                             if (!allDecorations[color]) {
                                 allDecorations[color] = [];
                             }
-                            if (lineText.length > range.start) {
+                            if (formattedLineText.length > range.start) {
                                 const startPos = new vscode.Position(lineIndex, range.start);
                                 const endPos = new vscode.Position(lineIndex, Math.min(range.end + 1, lineText.length));
                                 allDecorations[color].push(new vscode.Range(startPos, endPos));
